@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/blue_background"
+    tools:context=".MainActivity">
+
+    <!-- 顶部水平布局 -->
+
+    <!-- 下面的水平布局 -->
+    <!-- 顶部导航栏 -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:background="#F0F0F0">
+
+        <Button
+            android:id="@+id/changeCityBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="切换"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/currentCityText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="天气情况"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="#333333" />
+
+        <Button
+            android:id="@+id/settingBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="设置"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <!-- 当前天气卡片 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <RadioGroup
+            android:id="@+id/rgTemperatureUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end">
+
+            <RadioButton
+                android:id="@+id/rbCelsius"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="摄氏度"
+                android:checked="true"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rbFahrenheit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="华氏度"
+                android:textSize="14sp"/>
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/sampleWeather"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="阴  25~30℃"
+            android:textSize="20sp"
+            android:textColor="#374151"
+            android:gravity="center"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/curTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="28℃"
+            android:textSize="80sp"
+            android:textStyle="bold"
+            android:textColor="#111827"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/feelsLikeTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="体感温度：30℃"
+            android:textSize="20sp"
+            android:textColor="#4B5563"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+            <!-- 未来 7 天天气卡片 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp"
+                android:layout_marginTop="5dp">
+
+                <!-- day 1 -->
+                <LinearLayout
+                    android:id="@+id/day1LinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/day1Pic"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:text="小雨"
+                        android:textSize="15sp"
+                        android:textColor="#374151" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/day1Week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="星期五"
+                            android:textSize="16sp"
+                            android:textColor="#111827" />
+
+                        <TextView
+                            android:id="@+id/day1Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6/13"
+                            android:textSize="13sp"
+                            android:textColor="#6B7280" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/day1Temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="26℃ / 16℃"
+                        android:textSize="17sp"
+                        android:textColor="#111827" />
+
+                </LinearLayout>
+
+                <!-- day 2 -->
+                <LinearLayout
+                    android:id="@+id/day2LinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/day2Pic"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:text="小雨"
+                        android:textSize="15sp"
+                        android:textColor="#374151" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/day2Week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="星期六"
+                            android:textSize="16sp"
+                            android:textColor="#111827" />
+
+                        <TextView
+                            android:id="@+id/day2Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6/14"
+                            android:textSize="13sp"
+                            android:textColor="#6B7280" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/day2Temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="26℃ / 16℃"
+                        android:textSize="17sp"
+                        android:textColor="#111827" />
+                </LinearLayout>
+
+                <!-- day 3 -->
+                <LinearLayout
+                    android:id="@+id/day3LinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/day3Pic"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:text="多云"
+                        android:textSize="15sp"
+                        android:textColor="#374151" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/day3Week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="星期日"
+                            android:textSize="16sp"
+                            android:textColor="#111827" />
+
+                        <TextView
+                            android:id="@+id/day3Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6/15"
+                            android:textSize="13sp"
+                            android:textColor="#6B7280" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/day3Temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="26℃ / 16℃"
+                        android:textSize="17sp"
+                        android:textColor="#111827" />
+                </LinearLayout>
+
+                <!-- day 4 -->
+                <LinearLayout
+                    android:id="@+id/day4LinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/day4Pic"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:text="小雨"
+                        android:textSize="15sp"
+                        android:textColor="#374151" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/day4Week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="星期一"
+                            android:textSize="16sp"
+                            android:textColor="#111827" />
+
+                        <TextView
+                            android:id="@+id/day4Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6/16"
+                            android:textSize="13sp"
+                            android:textColor="#6B7280" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/day4Temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="26℃ / 16℃"
+                        android:textSize="17sp"
+                        android:textColor="#111827" />
+                </LinearLayout>
+
+                <!-- day 5 -->
+                <LinearLayout
+                    android:id="@+id/day5LinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/day5Pic"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:text="中雨"
+                        android:textSize="15sp"
+                        android:textColor="#374151" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/day5Week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="星期二"
+                            android:textSize="16sp"
+                            android:textColor="#111827" />
+
+                        <TextView
+                            android:id="@+id/day5Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6/17"
+                            android:textSize="13sp"
+                            android:textColor="#6B7280" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/day5Temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="26℃ / 16℃"
+                        android:textSize="17sp"
+                        android:textColor="#111827" />
+                </LinearLayout>
+
+                <!-- day 6 -->
+                <LinearLayout
+                    android:id="@+id/day6LinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/day6Pic"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:text="中雨"
+                        android:textSize="15sp"
+                        android:textColor="#374151" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/day6Week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="星期三"
+                            android:textSize="16sp"
+                            android:textColor="#111827" />
+
+                        <TextView
+                            android:id="@+id/day6Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6/18"
+                            android:textSize="13sp"
+                            android:textColor="#6B7280" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/day6Temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="26℃ / 16℃"
+                        android:textSize="17sp"
+                        android:textColor="#111827" />
+                </LinearLayout>
+
+                <!-- day 7 -->
+                <LinearLayout
+                    android:id="@+id/day7LinearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/day7Pic"
+                        android:layout_width="72dp"
+                        android:layout_height="wrap_content"
+                        android:text="中雨"
+                        android:textSize="15sp"
+                        android:textColor="#374151" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/day7Week"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="星期四"
+                            android:textSize="16sp"
+                            android:textColor="#111827" />
+
+                        <TextView
+                            android:id="@+id/day7Date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6/19"
+                            android:textSize="13sp"
+                            android:textColor="#6B7280" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/day7Temp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="26℃ / 16℃"
+                        android:textSize="17sp"
+                        android:textColor="#111827" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WeatherExpect</string>
+    <string name="title_activity_change_city">changeCityActivity</string>
+</resources>
