@@ -1,14 +1,11 @@
 package com.example.weatherexpect
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore.Downloads
 import android.util.Log
-import android.view.Menu
-import android.view.View
+import android.provider.Settings
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.RadioGroup
@@ -36,12 +33,9 @@ import com.example.weatherexpect.Tool.ActivityRequest
 import com.example.weatherexpect.Tool.ActivityRequest.REQUEST_NOTIFICATION_PERMISSION
 import com.example.weatherexpect.Tool.Result.DailyWeatherResult
 import com.example.weatherexpect.Tool.Result.NowWeatherResult
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.math.sqrt
 import android.Manifest
+import android.app.AlarmManager
 import android.content.SharedPreferences
 
 
@@ -56,13 +50,8 @@ class MainActivity : AppCompatActivity() {
     var content_:String="aa"
 
     // 延迟初始化数据库实例
-    private val database: WeatherDatabase by lazy {
-        // 使用应用上下文获取数据库实例
-        WeatherDatabase.getDatabase(
-            context = applicationContext,
-            scope = lifecycleScope // 使用Activity的生命周期作用域
-        )
-    }
+    private val database: WeatherDatabase
+        get() = (application as MyApplication).database
 
     // 获取DAO
     private val weatherDao: WeatherDao by lazy { database.weatherDao() }
@@ -180,8 +169,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
-
     //更新前端界面
     fun UpdataWeather(cityId:String,cityName:String){
         currentCityText.setText(cityName)
@@ -223,6 +210,7 @@ class MainActivity : AppCompatActivity() {
                     Log.e(TAG, "failure to update current weather")
                 }
             }
+            Unit
         }
     }
 
@@ -251,6 +239,7 @@ class MainActivity : AppCompatActivity() {
                     DisplayDailyWeatherPlaceholder()
                 }
             }
+            Unit
         }
     }
 
@@ -352,8 +341,6 @@ class MainActivity : AppCompatActivity() {
             val cityID = data?.getStringExtra("CITY_ID") ?: ""
             val cityName = data?.getStringExtra("CITY_NAME") ?: ""
             UpdataWeather(Setting.currentCityID, Setting.currentCityName)
-        } else {
-            Toast.makeText(this, "操作失败", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -376,12 +363,22 @@ class MainActivity : AppCompatActivity() {
                 return
             }
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(AlarmManager::class.java)
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                startActivity(intent)
+            }
+        }
+
         // 权限已有
         startNotificationService()
     }
 
     private fun startNotificationService() {
         Log.d("Notification", "setServiceAlarm enabled")
+        PollService.setServiceAlarm(this, true)   // 设置 30 分钟重复闹钟
+        PollService.startService(this)                  // 立刻执行一次
     }
 
     // 权限回调
@@ -405,9 +402,6 @@ class MainActivity : AppCompatActivity() {
 
     //初始化控件
     fun initWidget(){
-
-        Setting.initialize(database.weatherDao())
-        WeatherService.initialize(weatherDao = database.weatherDao())
 
         weatherViewModel = ViewModelProvider(this).get(WeatherViewModel::class.java)
 

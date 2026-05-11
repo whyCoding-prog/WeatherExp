@@ -11,8 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.content.ContextCompat
 import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
 import com.baidu.location.LocationClient
@@ -55,6 +54,7 @@ class MapPickerActivity : AppCompatActivity() {
 
         baiduMap = mapView.map
 
+
         // 开启定位图层
         baiduMap.isMyLocationEnabled = true
 
@@ -68,8 +68,8 @@ class MapPickerActivity : AppCompatActivity() {
                 // 在点击位置添加标记
                 baiduMap.clear()
 
-                val icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_location_pin)
-                    ?: createDefaultMarkerIcon()
+
+                val icon = getMarkerIcon()
 
                 val marker = MarkerOptions().position(latLng).icon(icon)
                 baiduMap.addOverlay(marker)
@@ -103,16 +103,17 @@ class MapPickerActivity : AppCompatActivity() {
         startLocation()
     }
 
-    private fun createDefaultMarkerIcon(): BitmapDescriptor {
-        val size = 40
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    // 把 Vector XML 转成BitmapDescriptor
+    private fun getMarkerIcon(): BitmapDescriptor {
+        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_location_pin)!!
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth,
+            drawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
         val canvas = Canvas(bitmap)
-        val paint = Paint().apply {
-            color = Color.RED
-            isAntiAlias = true
-            style = Paint.Style.FILL
-        }
-        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 

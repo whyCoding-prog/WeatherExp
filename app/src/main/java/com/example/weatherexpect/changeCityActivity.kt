@@ -38,8 +38,6 @@ class changeCityActivity : AppCompatActivity() {
 
     private var searchJob: Job? = null // 声明协程Job用于取消旧任务
 
-    private lateinit var locationResult: ((Double, Double) -> Unit)
-
     private var isFromMap = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,15 +82,12 @@ class changeCityActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<Button>(R.id.MapBtn).setOnClickListener {
-            openMapForLocation()
+        findViewById<Button>(R.id.backBtn).setOnClickListener {
+            finish()
         }
 
-        setLocationResultCallback { lat, lng ->
-
-            val apiLocation = CoordinateConverter.getApiLocationFromCoordinates(this, lat, lng)
-            Log.d("MapResult", "API Location: $apiLocation")
-            weatherViewModel.fetchLocation(apiLocation)
+        findViewById<Button>(R.id.MapBtn).setOnClickListener {
+            openMapForLocation()
         }
 
     }
@@ -126,18 +121,6 @@ class changeCityActivity : AppCompatActivity() {
         })
     }
 
-    //延迟搜索任务
-    private val searchRunnable = Runnable {
-        val query = searchEdit.text.toString().trim()
-        if (query.length >= 2) { // 至少2个字符才搜索
-            weatherViewModel.fetchLocation(query)
-        }else {
-            // 清空搜索结果当输入少于2个字符
-            adapter.submitList(emptyList())
-        }
-    }
-
-
     private fun setupRecyclerView(){
         //设置布局管理器
         rvCities.layoutManager=LinearLayoutManager(this)
@@ -160,20 +143,14 @@ class changeCityActivity : AppCompatActivity() {
         finish()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // 防止内存泄漏
-        searchEdit.removeCallbacks(searchRunnable)
-    }
 
-
-    // ✅ 打开百度地图选点
+    // 打开百度地图选点
     private fun openMapForLocation() {
         val intent = Intent(this, MapPickerActivity::class.java)
         startActivityForResult(intent, MAP_REQUEST_CODE)
     }
 
-    // ✅ 接收地图返回的经纬度 → 传给和风 GeoAPI
+    // 接收地图返回的经纬度 → 传给和风 GeoAPI
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -185,25 +162,14 @@ class changeCityActivity : AppCompatActivity() {
             if (lat != 0.0 && lng != 0.0) {
                 Toast.makeText(this, "已选择: $address", Toast.LENGTH_SHORT).show()
 
-                // ✅ 把经纬度拼成和风天气 GeoAPI 的格式："经度,纬度"
+                // 把经纬度->和风天气GeoAPI："经度,纬度"
                 val qweatherLocation = "${String.format("%.2f", lng)},${String.format("%.2f", lat)}"
                 Log.d("MapResult", "传给和风GeoAPI: $qweatherLocation")
 
-                isFromMap = true  // ✅ 标记来自地图
+                isFromMap = true  // 标记来自地图
                 weatherViewModel.fetchLocation(qweatherLocation)
-                // 接下来 locationLiveData 的 observer 会自动处理：
-                // → 收到 GeoAPI 返回的 LocationID
-                // → 自动调用 returnSelectedCity()
-                // → 返回 MainActivity
             }
         }
-    }
-
-
-
-    // 设置位置选择回调
-    fun setLocationResultCallback(callback: (Double, Double) -> Unit) {
-        this.locationResult = callback
     }
 
 }
