@@ -61,26 +61,7 @@ class changeCityActivity : AppCompatActivity() {
         initWidget()
         setupRecyclerView()
         setupSearchListener()
-
-
-        // 监听和风 GeoAPI 返回结果
-        weatherViewModel.locationLiveData.observe(this) { response ->
-            response?.let { locationResponse ->
-                val locations = locationResponse.locations
-
-                if (isFromMap && locations.isNotEmpty()) {
-                    returnSelectedCity(locations[0])
-                } else if (locations.isNotEmpty()) {
-                    adapter.submitList(locations)       // 来自搜索 → 显示列表让用户选
-                } else {
-                    adapter.submitList(emptyList())
-                    Toast.makeText(this, "搜索失败或无结果", Toast.LENGTH_SHORT).show()
-                }
-            } ?: run {
-                adapter.submitList(emptyList())
-                Toast.makeText(this, "搜索失败或无结果", Toast.LENGTH_SHORT).show()
-            }
-        }
+        observeViewModel()
 
         findViewById<Button>(R.id.backBtn).setOnClickListener {
             finish()
@@ -96,6 +77,23 @@ class changeCityActivity : AppCompatActivity() {
         weatherViewModel=ViewModelProvider(this).get(WeatherViewModel::class.java)
         searchEdit=findViewById(R.id.searchEdit)
         rvCities=findViewById(R.id.rv_cities)
+    }
+
+    private fun observeViewModel() {
+        weatherViewModel.locationLiveData.observe(this) { response ->
+            val locations = response?.locations  // ✅ 对应你的字段名
+
+            if (locations.isNullOrEmpty()) {
+                adapter.submitList(emptyList())
+                Toast.makeText(this, "未搜索到结果", Toast.LENGTH_SHORT).show()
+            } else {
+                if (isFromMap) {
+                    returnSelectedCity(locations[0])
+                } else {
+                    adapter.submitList(locations)
+                }
+            }
+        }
     }
 
     private fun setupSearchListener(){

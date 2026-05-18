@@ -41,6 +41,9 @@ class MapPickerActivity : AppCompatActivity() {
     private var selectedLat: Double = 0.0
     private var selectedLng: Double = 0.0
     private var selectedAddress: String = ""
+    private var geoCoder: GeoCoder? = null
+    private var locationClient : LocationClient?=null
+    private var locationListener: BDAbstractLocationListener? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +102,21 @@ class MapPickerActivity : AppCompatActivity() {
             }
         }
 
+        geoCoder = GeoCoder.newInstance()
+        geoCoder?.setOnGetGeoCodeResultListener(object : OnGetGeoCoderResultListener {
+            override fun onGetGeoCodeResult(result: GeoCodeResult?) {}
+
+            override fun onGetReverseGeoCodeResult(result: ReverseGeoCodeResult?) {
+                if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+                    tvAddress.text = "未知地址"
+                    return
+                }
+                selectedAddress = result.address
+                tvAddress.text = "地址: $selectedAddress"
+            }
+        })
+
+
         // 启动定位
         startLocation()
     }
@@ -120,21 +138,7 @@ class MapPickerActivity : AppCompatActivity() {
 
     // 逆地理编码：经纬度 - 地址文字
     private fun reverseGeoCode(latLng: LatLng) {
-        val geoCoder = GeoCoder.newInstance()
-        geoCoder.setOnGetGeoCodeResultListener(object : OnGetGeoCoderResultListener {
-            override fun onGetGeoCodeResult(result: GeoCodeResult?) {}
-
-            override fun onGetReverseGeoCodeResult(result: ReverseGeoCodeResult?) {
-                if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-                    tvAddress.text = "未知地址"
-                    return
-                }
-                selectedAddress = result.address
-                tvAddress.text = "地址: $selectedAddress"
-            }
-        })
-
-        geoCoder.reverseGeoCode(
+        geoCoder?.reverseGeoCode(
             ReverseGeoCodeOption()
                 .location(latLng)
                 .newVersion(1)
@@ -143,25 +147,26 @@ class MapPickerActivity : AppCompatActivity() {
 
     // 定位到当前位置
     private fun startLocation() {
-        val locationClient = LocationClient(applicationContext)
+        locationClient = LocationClient(applicationContext)
         val option = LocationClientOption().apply {
             isOpenGps = true
             setCoorType("bd09ll")  // 百度坐标系
             setScanSpan(0)         // 只定位一次
         }
-        locationClient.locOption = option
+        locationClient?.locOption = option
 
-        locationClient.registerLocationListener(object : BDAbstractLocationListener() {
+
+        locationListener = object : BDAbstractLocationListener() {
             override fun onReceiveLocation(location: BDLocation) {
-                // 移动地图到当前位置
                 val latLng = LatLng(location.latitude, location.longitude)
                 val update = MapStatusUpdateFactory.newLatLngZoom(latLng, 16f)
                 baiduMap.animateMapStatus(update)
 
-                locationClient.stop()
+                locationClient?.stop()
             }
-        })
-        locationClient.start()
+        }
+        locationClient?.registerLocationListener(locationListener)
+        locationClient?.start()
     }
 
     override fun onResume() {
@@ -178,5 +183,14 @@ class MapPickerActivity : AppCompatActivity() {
         super.onDestroy()
         baiduMap.isMyLocationEnabled = false
         mapView.onDestroy()
+        geoCoder?.destroy()
+        geoCoder = null
+
+        locationListener?.let {
+            locationClient?.unRegisterLocationListener(it)
+        }
+        locationClient?.stop()
+        locationClient = null
+        locationListener = null
     }
 }
